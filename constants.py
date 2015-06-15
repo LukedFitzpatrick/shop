@@ -1,0 +1,19 @@
+import libtcodpy as libtcod
+
+COMMAND_CODE_ACTOR = 0
+COMMAND_CODE_OBJECTS = 1
+
+K_RIGHT = libtcod.KEY_RIGHT
+K_LEFT = libtcod.KEY_LEFT
+K_DOWN = libtcod.KEY_DOWN
+K_UP = libtcod.KEY_UP
+K_INVENTORY = 'i'
+K_DROP = 'd'
+
+SCREEN_WIDTH = 30
+SCREEN_HEIGHT = 30
+
+INVENTORY_WIDTH = SCREEN_WIDTH
+
+# the maximum FPS
+LIMIT_FPS = 20
