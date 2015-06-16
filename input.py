@@ -3,9 +3,9 @@ from constants import *
 from functools import partial
 
 
-def inputToCommands(commands, objects, con, player):
+def inputToCommands(key, commands, objects, con, player):
    # looks at what key is pressed and creates commands which control the game 
-   key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
+
    # they pressed the left key
    if key.vk == K_LEFT:
       moveCommand = Command(COMMAND_CODE_ACTOR, moveLeft, objects)

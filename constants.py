@@ -1,4 +1,5 @@
 import libtcodpy as libtcod
+import random
 
 COMMAND_CODE_ACTOR = 0
 COMMAND_CODE_OBJECTS = 1
@@ -9,6 +10,13 @@ K_DOWN = libtcod.KEY_DOWN
 K_UP = libtcod.KEY_UP
 K_DROP = 'd'
 K_PICKUP = 'g'
+K_NOTHING = libtcod.KEY_SPACE
+
+MERCHANT_MOVE_LAG = 5
+MERCHANT_LIFE = 500
+MERCHANT_TARGET_CHANGE = 50
+
+MERCHANT_SPAWN_CHANCE = 100
 
 SCREEN_WIDTH = 30
 GAME_HEIGHT = 20
@@ -28,6 +36,12 @@ SEE_MESSAGE_COLOUR_CODE = 5
 PICKUP_MESSAGE_COLOUR_CODE = 3
 DROP_MESSAGE_COLOUR_CODE = 4
 
+
+
+PLAYER_NAME = "You"
+
 # the maximum FPS
 LIMIT_FPS = 20
 
+def getRandomColour():
+   return libtcod.Color(random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255))

@@ -1,6 +1,6 @@
 class Object:
     # anything which can be displayed on the screen: is basically just a bag of components.
-    def __init__(self, x, y, blocks, graphic=None, actor=None, item=None):
+    def __init__(self, x, y, blocks, graphic=None, actor=None, item=None, ai=None):
         self.x = x
         self.y = y
         self.blocks = blocks
@@ -16,3 +16,7 @@ class Object:
         self.item = item
         if self.item:
             self.item.parent = self
+
+        self.ai = ai
+        if self.ai:
+            self.ai.parent = self

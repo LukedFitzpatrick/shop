@@ -5,6 +5,7 @@ from actor import *
 from input import *
 from constants import *
 from itemLoader import *
+from merchant import *
 import libtcodpy as libtcod
 
 def playGame(player, gameObjects, con, panel):
@@ -15,8 +16,9 @@ def playGame(player, gameObjects, con, panel):
    # need to do an initial render before going into the loop
    renderAll(objects, con, panel)
    libtcod.console_flush()
+   key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
    # handle commands and update everything
-   commandStream = inputToCommands(commandStream, objects, con, player)
+   commandStream = inputToCommands(key, commandStream, objects, con, player)
    for command in commandStream:
       # carry out the command on the player.
       command.execute(player)
@@ -34,8 +36,9 @@ def playGame(player, gameObjects, con, panel):
       # clear objects ready for next frame but don't flush them
       clearAll(objects, con)
 
-      # handle commands and update everything
-      commandStream = inputToCommands(commandStream, objects, con, player)
+      key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
+      # handle player commands and update everything
+      commandStream = inputToCommands(key, commandStream, objects, con, player)
       for command in commandStream:
          # carry out the command on the player, or on the objects etc.
          if command.code == COMMAND_CODE_ACTOR:
@@ -44,6 +47,27 @@ def playGame(player, gameObjects, con, panel):
             objects = command.execute(objects)
          # once we've executed the command, remove it from the stream.
          commandStream.remove(command)
+
+      # handle commands for each object with a brain
+      for object in objects:
+         if object.ai:
+            if object.ai.readyToDie:
+               objects.remove(object)               
+            else:
+               keyPressed = object.ai.generateKeypress()
+               objectCommandStream = inputToCommands(keyPressed, [], objects, con, player)
+               for command in objectCommandStream:
+                  # carry out the command on the objects with AIs.
+                  if command.code == COMMAND_CODE_ACTOR:
+                     command.execute(object)
+                  if command.code == COMMAND_CODE_OBJECTS:
+                     objects = command.execute(objects)
+                  # once we've executed the command, remove it from the stream.
+                  objectCommandStream.remove(command)
+
+      # potentially generate new merchants/shoppers
+      if(random.randrange(0, MERCHANT_SPAWN_CHANCE) == 11):
+            objects.append(generateMerchant())
    #################################################################
       
 
@@ -52,7 +76,7 @@ objects = []
 # game object initialisation
 # make the player
 playerActor = Actor()
-playerGraphic = Graphic('@', "You", PLAYER_COLOUR, None)
+playerGraphic = Graphic('@', PLAYER_NAME, PLAYER_COLOUR, None)
 player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor)
 
 items = getFullItemList()

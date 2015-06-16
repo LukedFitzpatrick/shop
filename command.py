@@ -30,7 +30,8 @@ def move(object, dx, dy, objects):
    
    if legalMove:
       object.actor.move(dx, dy)
-      updateMoveMessage(object, objects)
+      if object.graphic.name == PLAYER_NAME:
+         updateMoveMessage(object, objects)
 
 def moveLeft(object, objects):
    move(object, -1, 0, objects)
@@ -68,6 +69,8 @@ def pickupObject(actorObject, objectToPickup):
          + "\n(" + str(K_DROP) + " to drop.)", PICKUP_MESSAGE_COLOUR_CODE)
       actorObject.actor.pickupObject(objectToPickup)
 
+
+# does the updates for standing over objects
 def updateMoveMessage(object, objects):
    found = False
    for item in objects:
