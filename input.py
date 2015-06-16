@@ -28,15 +28,23 @@ def inputToCommands(commands, objects, con, player):
    # it might be a 'character' key
    else:
       key_char = chr(key.c)
-      # they tried to open the inventory
-      if key_char == K_INVENTORY:
-         inventoryCommand = Command(COMMAND_CODE_ACTOR, openInventoryMenu, con)
-         commands.append(inventoryCommand)
 
-      if key_char == K_DROP:
+      if key_char == K_DROP and player.actor.heldObject:
          placeCommand = Command(COMMAND_CODE_OBJECTS, placeObject, player.actor.heldObject)
          dropCommand = Command(COMMAND_CODE_ACTOR, dropObject)
          commands.append(placeCommand)
          commands.append(dropCommand)
+
+      if key_char == K_PICKUP and not player.actor.heldObject:
+         foundObject = None
+         for object in objects:
+            if not foundObject and (object.x == player.x and object.y == player.y and not (object is player)):
+               foundObject = object
+
+         if foundObject:
+            pickupCommand = Command(COMMAND_CODE_ACTOR, pickupObject, foundObject)
+            unplaceCommand = Command(COMMAND_CODE_OBJECTS, unplaceObject, foundObject)
+            commands.append(pickupCommand)
+            commands.append(unplaceCommand)
          
    return commands

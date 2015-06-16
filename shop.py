@@ -6,15 +6,14 @@ from input import *
 from constants import *
 from itemLoader import *
 import libtcodpy as libtcod
-from inventory import *
 
-def playGame(player, gameObjects, con):
+def playGame(player, gameObjects, con, panel):
    # main game loop starts here
    objects = gameObjects
    commandStream = []   
    #################################################################
    # need to do an initial render before going into the loop
-   renderAll(objects, con)
+   renderAll(objects, con, panel)
    libtcod.console_flush()
    # handle commands and update everything
    commandStream = inputToCommands(commandStream, objects, con, player)
@@ -28,7 +27,7 @@ def playGame(player, gameObjects, con):
    #################################################################
    while not libtcod.console_is_window_closed():
       # draw all the objects first:
-      renderAll(objects, con)
+      renderAll(objects, con, panel)
       # apply drawing updates
       libtcod.console_flush()
 
@@ -53,41 +52,45 @@ objects = []
 # game object initialisation
 # make the player
 playerActor = Actor()
-playerGraphic = Graphic('@', "You", libtcod.Color(255, 255, 255), None)
-playerInventory = Inventory()
-items = getFullItemList()
-for item in items:
-   playerInventory.addItem(item)
+playerGraphic = Graphic('@', "You", PLAYER_COLOUR, None)
+player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor)
 
-player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor, inventory=playerInventory)
+items = getFullItemList()
+
+heldItem = items[1]
+heldGraphic = Graphic(heldItem.char, heldItem.name, heldItem.colour, None)
+heldObject = Object(x=5, y=5, blocks=False, graphic=heldGraphic, actor=None, item=heldItem)
+
+player.actor.pickupObject(heldObject)
 objects.append(player)
 
-# make the boundary walls
+# make the invisible boundary walls
 # make the boundary walls on the far left and right of the screen
-for row in range(0, SCREEN_HEIGHT):
-   wallGraphic = Graphic('#', "Wall", libtcod.Color(255, 255, 255), libtcod.Color(130, 150, 152))
-   newWallLeft = Object(x=0, y=row, blocks=True, graphic=wallGraphic)
-   wallGraphic = Graphic('#', "Wall", libtcod.Color(255, 255, 255), libtcod.Color(130, 150, 152))
-   newWallRight = Object(x=SCREEN_WIDTH-1, y=row, blocks=True, graphic=wallGraphic)
+for row in range(0, GAME_HEIGHT):
+   wallGraphic = getWallGraphic()
+   newWallLeft = Object(x=-1, y=row, blocks=True, graphic=wallGraphic)
+   wallGraphic = getWallGraphic()
+   newWallRight = Object(x=SCREEN_WIDTH, y=row, blocks=True, graphic=wallGraphic)
    objects.append(newWallLeft)
    objects.append(newWallRight)
 
 # make the boundary walls on the top and bottom of the screen
-for column in range(0, SCREEN_WIDTH-1):
-   wallGraphic = Graphic('#', "Wall", libtcod.Color(255, 255, 255), libtcod.Color(130, 150, 152))
-   newWallTop = Object(x=column, y=0, blocks=True, graphic=wallGraphic)
+for column in range(0, SCREEN_WIDTH):
+   wallGraphic = getWallGraphic()
+   newWallTop = Object(x=column, y=-1, blocks=True, graphic=wallGraphic)
    objects.append(newWallTop)
-   # leave room for the door!
-   if not column == int(SCREEN_WIDTH/2):
-      wallGraphic = Graphic('#', "Wall", libtcod.Color(255, 255, 255), libtcod.Color(130, 150, 152))
-      newWallBottom = Object(x=column, y=SCREEN_HEIGHT-1, blocks=True, graphic=wallGraphic)  
-      objects.append(newWallBottom)
+   wallGraphic = getWallGraphic()
+   newWallBottom = Object(x=column, y=GAME_HEIGHT, blocks=True, graphic=wallGraphic)  
+   objects.append(newWallBottom)
    
 # libtcod initialisation
-libtcod.console_set_custom_font('arial12x12.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
-libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWORD SHOP', False)
+libtcod.console_set_custom_font('terminal16x16_gs_ro.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+libtcod.console_init_root(SCREEN_WIDTH, GAME_HEIGHT+PANEL_HEIGHT, 'SWORD SHOP', False)
 libtcod.sys_set_fps(LIMIT_FPS)
-con = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
+panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
+con = libtcod.console_new(SCREEN_WIDTH, GAME_HEIGHT)
+libtcod.console_set_default_background(con, GAME_BACKGROUND_COLOUR)
+libtcod.console_clear(con)
 
 
-playGame(player, objects, con)
+playGame(player, objects, con, panel)

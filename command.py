@@ -1,3 +1,6 @@
+from message import *
+from constants import *
+
 class Command:
    def __init__(self, code, executeFunction, firstInput=None, secondInput=None):
       self.executeFunction = executeFunction
@@ -27,6 +30,7 @@ def move(object, dx, dy, objects):
    
    if legalMove:
       object.actor.move(dx, dy)
+      updateMoveMessage(object, objects)
 
 def moveLeft(object, objects):
    move(object, -1, 0, objects)
@@ -40,16 +44,37 @@ def moveUp(object, objects):
 def moveDown(object, objects):
    move(object, 0, 1, objects)
 
-def openInventoryMenu(object, con):
-   if(object.inventory):
-      object.inventory.displayInventoryMenu(con)
-
+# place and remove objects from the game world.
 def placeObject(objects, object):
    if(object):
       objects.append(object)
    return objects
 
-def dropObject(object):
-   print "in drop object"
-   if object.actor:
-      object.actor.dropObject()
+def unplaceObject(objects, object):
+   if(object in objects):
+      objects.remove(object)
+   return objects
+
+# make an actor pick up and drop objects.
+def dropObject(actorObject):
+   if actorObject.actor.heldObject:
+      setMessage(actorObject.graphic.name + " dropped " + actorObject.actor.heldObject.graphic.name
+         , DROP_MESSAGE_COLOUR_CODE)
+      actorObject.actor.dropObject()
+
+def pickupObject(actorObject, objectToPickup):
+   if actorObject.actor and not actorObject.actor.heldObject:
+      setMessage(actorObject.graphic.name + " picked up " + objectToPickup.graphic.name
+         + "\n(" + str(K_DROP) + " to drop.)", PICKUP_MESSAGE_COLOUR_CODE)
+      actorObject.actor.pickupObject(objectToPickup)
+
+def updateMoveMessage(object, objects):
+   found = False
+   for item in objects:
+      if not found and (item.x == object.x and item.y == object.y and not (item is object)):
+         setMessage("You see a " + item.graphic.name + "\n (" + 
+            str(K_PICKUP) + " to pickup)", SEE_MESSAGE_COLOUR_CODE)
+         found = True
+   if not found:
+      if("You see a" in getMessage()):
+         setMessage("", 5)
