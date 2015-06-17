@@ -20,3 +20,10 @@ class Object:
         self.ai = ai
         if self.ai:
             self.ai.parent = self
+
+    def isCloseTo(self, other):
+        return  (
+            ((self.x - other.x) * (self.x - other.x) <= 1) 
+            and 
+            ((self.y - other.y) * (self.y - other.y) <= 1)
+        )

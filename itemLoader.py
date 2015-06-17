@@ -45,6 +45,12 @@ def getFullItemList():
 
       newItem = Item(char, name, libtcod.Color(red, green, blue), cost)
       items.append(newItem)
-
+   global itemList
+   itemList = items
    return items
 
+def getQuickItemList():
+   if itemList:
+      return itemList
+   else:
+      return getFullItemList

@@ -1,5 +1,6 @@
 from message import *
 from constants import *
+from transaction import *
 
 class Command:
    def __init__(self, code, executeFunction, firstInput=None, secondInput=None):
@@ -31,7 +32,7 @@ def move(object, dx, dy, objects):
    if legalMove:
       object.actor.move(dx, dy)
       if object.graphic.name == PLAYER_NAME:
-         updateMoveMessage(object, objects)
+         pass #updateMoveMessage(object, objects)
 
 def moveLeft(object, objects):
    move(object, -1, 0, objects)
@@ -70,14 +71,27 @@ def pickupObject(actorObject, objectToPickup):
       actorObject.actor.pickupObject(objectToPickup)
 
 
-# does the updates for standing over objects
+# does the updates for standing over objects and speaking to merchants
 def updateMoveMessage(object, objects):
    found = False
+   # first check for actual people around who might say something
+   for person in objects:
+      if not found and person.ai and not (person is object) and (person.isCloseTo(object)):
+         found = True
+         setMessage(person.ai.getPhrase())
+         # also offer a transaction here
+         if person.ai.sellableObject:
+            offerTransaction(person.ai.sellableObject, person)
+
+   # next check for items on the ground
    for item in objects:
-      if not found and (item.x == object.x and item.y == object.y and not (item is object)):
+      if (item.x == object.x and item.y == object.y and not (item is object)):
          setMessage("You see a " + item.graphic.name + "\n (" + 
             str(K_PICKUP) + " to pickup)", SEE_MESSAGE_COLOUR_CODE)
          found = True
+   
    if not found:
-      if("You see a" in getMessage()):
+      if("You see a" in getMessage() or "says" in getMessage()):
          setMessage("", 5)
+      destroyCurrentTransaction()
+

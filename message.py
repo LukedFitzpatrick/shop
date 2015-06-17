@@ -14,3 +14,6 @@ def getMessage():
 def getMessageColour():
    global messageColour
    return messageColour
+
+def getMoneyColour(money):
+   return INFO_BAR_MONEY_COLOUR

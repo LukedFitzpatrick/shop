@@ -1,5 +1,6 @@
 import libtcodpy as libtcod
 import random
+from itemLoader import *
 from constants import *
 
 class AI:
@@ -10,6 +11,15 @@ class AI:
       self.lifeCounter = MERCHANT_LIFE
       self.readyToDie = False
       self.targetCounter = MERCHANT_TARGET_CHANGE
+      self.sellableObject = random.choice(getQuickItemList())
+
+   def getPhrase(self):
+      if self.sellableObject:
+         return (self.parent.graphic.name + " says " + "\"Want to buy " + 
+         self.sellableObject.name + " for $" + str(self.sellableObject.cost) + "?\"")
+      else:
+         return (self.parent.graphic.name + " says " + "\"Sorry, I'm all sold out!\"")
+
 
    # behaviour for a merchant
    def generateKeypress(self):

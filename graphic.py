@@ -44,9 +44,9 @@ def clearAll(objects, con):
    for object in objects:
       if object.graphic:
          object.graphic.clear(con)
-   libtcod.console_blit(con, 0, 0, SCREEN_WIDTH, GAME_HEIGHT, 0, 0, 0)
+   libtcod.console_blit(con, 0, 0, SCREEN_WIDTH, GAME_HEIGHT, 0, 0, GAME_Y)
 
-def renderAll(objects, con, panel):
+def renderAll(objects, player, con, panel, infobar):
    # draw objects without actors first
    for object in objects:
       if not object.actor:
@@ -54,16 +54,35 @@ def renderAll(objects, con, panel):
    for object in objects:
       if object.actor:
          object.graphic.draw(con)
-   libtcod.console_blit(con, 0, 0, SCREEN_WIDTH, GAME_HEIGHT, 0, 0, 0)
+   
+   libtcod.console_blit(con, 0, 0, SCREEN_WIDTH, GAME_HEIGHT, 0, 0, GAME_Y)
 
-
+   # do panel stuff
    libtcod.console_set_default_background(panel, PANEL_BACKGROUND_COLOUR)
    libtcod.console_clear(panel)
  
    #print the current game message
    libtcod.console_set_default_foreground(panel, getMessageColour())
    libtcod.console_print_rect(panel, 1, 1, SCREEN_WIDTH-1, PANEL_HEIGHT, getMessage())
+   
+   # blit the panel to the screen
    libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y)
+
+   # do info bar stuff
+   libtcod.console_set_default_background(infobar, INFO_BAR_BACKGROUND_COLOUR)
+   libtcod.console_clear(infobar)
+   
+   # print their current money
+   libtcod.console_set_default_foreground(infobar, getMoneyColour(player.actor.money))
+   libtcod.console_print_rect(infobar, SCREEN_WIDTH/2 - 3, 0, SCREEN_WIDTH, INFO_BAR_HEIGHT, "$"+str(player.actor.money))
+
+   libtcod.console_blit(infobar, 0, 0, SCREEN_WIDTH, INFO_BAR_HEIGHT, 0, 0, INFO_BAR_Y)
+
+
+
+   
+
+
 
 def getWallGraphic():
    wallGraphic = Graphic('0', "Wall", WALL_COLOUR)

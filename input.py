@@ -1,5 +1,7 @@
 from command import *
 from constants import *
+from transaction import *
+from message import *
 from functools import partial
 
 
@@ -29,13 +31,15 @@ def inputToCommands(key, commands, objects, con, player):
    else:
       key_char = chr(key.c)
 
+      # they dropped an object onto the ground
       if key_char == K_DROP and player.actor.heldObject:
          placeCommand = Command(COMMAND_CODE_OBJECTS, placeObject, player.actor.heldObject)
          dropCommand = Command(COMMAND_CODE_ACTOR, dropObject)
          commands.append(placeCommand)
          commands.append(dropCommand)
 
-      if key_char == K_PICKUP and not player.actor.heldObject:
+      # they picked up an object off the ground
+      elif key_char == K_PICKUP and not player.actor.heldObject:
          foundObject = None
          for object in objects:
             if not foundObject and (object.x == player.x and object.y == player.y and not (object is player)):
@@ -46,5 +50,14 @@ def inputToCommands(key, commands, objects, con, player):
             unplaceCommand = Command(COMMAND_CODE_OBJECTS, unplaceObject, foundObject)
             commands.append(pickupCommand)
             commands.append(unplaceCommand)
+
+      elif key_char == K_ACCEPT_TRANSACTION and isActiveTransaction():
+         if(player.actor.takeMoney(getCurrentTransactionCost())):
+            placeCommand = Command(COMMAND_CODE_OBJECTS, placeObject, getCurrentTransactionObject(player.x, player.y))
+            commands.append(placeCommand)
+            transactionSuccess()
+            destroyCurrentTransaction()
+         else:
+            setMessage("Not enough cash!", 1)
          
    return commands

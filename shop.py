@@ -14,7 +14,7 @@ def playGame(player, gameObjects, con, panel):
    commandStream = []   
    #################################################################
    # need to do an initial render before going into the loop
-   renderAll(objects, con, panel)
+   renderAll(objects, player, con, panel, infobar)
    libtcod.console_flush()
    key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
    # handle commands and update everything
@@ -29,7 +29,7 @@ def playGame(player, gameObjects, con, panel):
    #################################################################
    while not libtcod.console_is_window_closed():
       # draw all the objects first:
-      renderAll(objects, con, panel)
+      renderAll(objects, player, con, panel, infobar)
       # apply drawing updates
       libtcod.console_flush()
 
@@ -68,6 +68,9 @@ def playGame(player, gameObjects, con, panel):
       # potentially generate new merchants/shoppers
       if(random.randrange(0, MERCHANT_SPAWN_CHANCE) == 11):
             objects.append(generateMerchant())
+
+      # update the moving messages
+      updateMoveMessage(player, objects)
    #################################################################
       
 
@@ -75,7 +78,7 @@ objects = []
 
 # game object initialisation
 # make the player
-playerActor = Actor()
+playerActor = Actor(money=500)
 playerGraphic = Graphic('@', PLAYER_NAME, PLAYER_COLOUR, None)
 player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor)
 
@@ -109,10 +112,11 @@ for column in range(0, SCREEN_WIDTH):
    
 # libtcod initialisation
 libtcod.console_set_custom_font('terminal16x16_gs_ro.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
-libtcod.console_init_root(SCREEN_WIDTH, GAME_HEIGHT+PANEL_HEIGHT, 'SWORD SHOP', False)
+libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWORD SHOP', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 con = libtcod.console_new(SCREEN_WIDTH, GAME_HEIGHT)
+infobar = libtcod.console_new(SCREEN_WIDTH, INFO_BAR_HEIGHT)
 libtcod.console_set_default_background(con, GAME_BACKGROUND_COLOUR)
 libtcod.console_clear(con)
 
