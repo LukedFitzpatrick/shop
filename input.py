@@ -2,6 +2,7 @@ from command import *
 from constants import *
 from transaction import *
 from message import *
+from sale import *
 from functools import partial
 
 
@@ -27,6 +28,7 @@ def inputToCommands(key, commands, objects, con, player):
    elif key.vk == K_UP:
       moveCommand = Command(COMMAND_CODE_ACTOR, moveUp, objects)
       commands.append(moveCommand)
+
    # it might be a 'character' key
    else:
       key_char = chr(key.c)
@@ -51,13 +53,21 @@ def inputToCommands(key, commands, objects, con, player):
             commands.append(pickupCommand)
             commands.append(unplaceCommand)
 
-      elif key_char == K_ACCEPT_TRANSACTION and isActiveTransaction():
-         if(player.actor.takeMoney(getCurrentTransactionCost())):
-            placeCommand = Command(COMMAND_CODE_OBJECTS, placeObject, getCurrentTransactionObject(player.x, player.y))
-            commands.append(placeCommand)
-            transactionSuccess()
-            destroyCurrentTransaction()
-         else:
-            setMessage("Not enough cash!", 1)
+      elif key_char == K_ACCEPT_TRANSACTION:
+         if isActiveTransaction():
+            if(player.actor.takeMoney(getCurrentTransactionCost())):
+               placeCommand = Command(COMMAND_CODE_OBJECTS, placeObject, getCurrentTransactionObject(player.x, player.y))
+               commands.append(placeCommand)
+               transactionSuccess()
+               destroyCurrentTransaction()
+            else:
+               setMessage("Not enough cash!", 1)
+
+         elif isActiveSale():
+            player.actor.giveMoney(getCurrentSaleCost())
+            dropCommand = Command(COMMAND_CODE_ACTOR, dropObject)
+            commands.append(dropCommand)
+            saleSuccess()
+            destroyCurrentSale()
          
    return commands

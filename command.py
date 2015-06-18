@@ -1,6 +1,7 @@
 from message import *
 from constants import *
 from transaction import *
+from sale import *
 
 class Command:
    def __init__(self, code, executeFunction, firstInput=None, secondInput=None):
@@ -78,15 +79,19 @@ def updateMoveMessage(object, objects):
    for person in objects:
       if not found and person.ai and not (person is object) and (person.isCloseTo(object)):
          found = True
-         setMessage(person.ai.getPhrase())
+         setMessage(person.ai.getPhrase(object.actor.heldObject))
          # also offer a transaction here
          if person.ai.sellableObject:
             offerTransaction(person.ai.sellableObject, person)
+         # offer a sale if the conditions are right
+         if (person.ai.desiredCategory and object.actor.heldObject and
+            person.ai.desiredCategory == object.actor.heldObject.item.category):
+            offerSale(object.actor.heldObject.item, person)
 
    # next check for items on the ground
    for item in objects:
       if (item.x == object.x and item.y == object.y and not (item is object)):
-         setMessage("You see a " + item.graphic.name + "\n (" + 
+         setMessage("You see a " + item.graphic.name + ", a " + item.item.category + ".\n (" + 
             str(K_PICKUP) + " to pickup)", SEE_MESSAGE_COLOUR_CODE)
          found = True
    

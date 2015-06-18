@@ -5,30 +5,10 @@ from actor import *
 from input import *
 from constants import *
 from itemLoader import *
-from merchant import *
+from spawner import *
 import libtcodpy as libtcod
-
-def splashScreen(console):
-   libtcod.console_set_default_background(console, SPLASH_BACKGROUND_COLOUR)
-   libtcod.console_clear(console)
- 
-   #print the splash messages
-   libtcod.console_set_default_foreground(console, SPLASH_FOREGROUND_COLOUR1)
-   libtcod.console_print_rect(console, 5, 6, SCREEN_WIDTH, SCREEN_HEIGHT, "SWORD SHOP")
-   libtcod.console_set_default_foreground(console, SPLASH_FOREGROUND_COLOUR2)
-   libtcod.console_print_rect(console, 5, 10, SCREEN_WIDTH, SCREEN_HEIGHT, "by Luke David\n   Fitzpatrick")
-   libtcod.console_set_default_foreground(console, SPLASH_FOREGROUND_COLOUR3)
-   libtcod.console_print_rect(console, 16, 17, SCREEN_WIDTH, SCREEN_HEIGHT, "press any key")
-
-   # blit the panel to the screen
-   libtcod.console_blit(console, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-(2*4), 0, 0, 4)   
-   libtcod.console_flush()
-   libtcod.console_wait_for_keypress(False)
-
-   
-
-
-
+import random
+from screens import *
 
 
 def playGame(player, gameObjects, con, panel):
@@ -77,7 +57,11 @@ def playGame(player, gameObjects, con, panel):
             if object.ai.readyToDie:
                objects.remove(object)               
             else:
-               keyPressed = object.ai.generateKeypress()
+               if object.ai.merchant:
+                  keyPressed = object.ai.generateMerchantKeypress()
+               elif object.ai.shopper:
+                  keyPressed = object.ai.generateShopperKeypress()
+
                objectCommandStream = inputToCommands(keyPressed, [], objects, con, player)
                for command in objectCommandStream:
                   # carry out the command on the objects with AIs.
@@ -89,8 +73,11 @@ def playGame(player, gameObjects, con, panel):
                   objectCommandStream.remove(command)
 
       # potentially generate new merchants/shoppers
-      if(random.randrange(0, MERCHANT_SPAWN_CHANCE) == 11):
-            objects.append(generateMerchant())
+      if(random.randrange(0, MERCHANT_SPAWN_CHANCE) == 1):
+         objects.append(generateMerchant())
+      if(random.randrange(0, SHOPPER_SPAWN_CHANCE) == 1):
+         objects.append(generateShopper())
+
 
       # update the moving messages
       updateMoveMessage(player, objects)
@@ -105,13 +92,7 @@ playerActor = Actor(money=90000)
 playerGraphic = Graphic('@', PLAYER_NAME, PLAYER_COLOUR, None)
 player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor)
 
-items = getFullItemList()
 
-heldItem = items[1]
-heldGraphic = Graphic(heldItem.char, heldItem.name, heldItem.colour, None)
-heldObject = Object(x=5, y=5, blocks=False, graphic=heldGraphic, actor=None, item=heldItem)
-
-player.actor.pickupObject(heldObject)
 objects.append(player)
 
 # make the invisible boundary walls
@@ -135,18 +116,27 @@ for column in range(0, SCREEN_WIDTH):
    
 # libtcod initialisation
 libtcod.console_set_custom_font('terminal16x16_gs_ro.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
-libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWORD SHOP', False)
+libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'sword shop', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 con = libtcod.console_new(SCREEN_WIDTH, GAME_HEIGHT)
 infobar = libtcod.console_new(SCREEN_WIDTH, INFO_BAR_HEIGHT)
 fullscreencon = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+#libtcod.console_set_fullscreen(True)
+
 libtcod.console_set_default_background(con, GAME_BACKGROUND_COLOUR)
 
-libtcod.console_clear(con)
 
+loadingScreen(fullscreencon)
+items = getFullItemList()
+"""
+libtcod.console_clear(fullscreencon)
 splashScreen(fullscreencon)
+libtcod.console_clear(fullscreencon)
+storyScreen(fullscreencon)
+"""
 libtcod.console_clear(con)
 
 playGame(player, objects, con, panel)
