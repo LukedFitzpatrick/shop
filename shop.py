@@ -8,6 +8,29 @@ from itemLoader import *
 from merchant import *
 import libtcodpy as libtcod
 
+def splashScreen(console):
+   libtcod.console_set_default_background(console, SPLASH_BACKGROUND_COLOUR)
+   libtcod.console_clear(console)
+ 
+   #print the splash messages
+   libtcod.console_set_default_foreground(console, SPLASH_FOREGROUND_COLOUR1)
+   libtcod.console_print_rect(console, 5, 6, SCREEN_WIDTH, SCREEN_HEIGHT, "SWORD SHOP")
+   libtcod.console_set_default_foreground(console, SPLASH_FOREGROUND_COLOUR2)
+   libtcod.console_print_rect(console, 5, 10, SCREEN_WIDTH, SCREEN_HEIGHT, "by Luke David\n   Fitzpatrick")
+   libtcod.console_set_default_foreground(console, SPLASH_FOREGROUND_COLOUR3)
+   libtcod.console_print_rect(console, 16, 17, SCREEN_WIDTH, SCREEN_HEIGHT, "press any key")
+
+   # blit the panel to the screen
+   libtcod.console_blit(console, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-(2*4), 0, 0, 4)   
+   libtcod.console_flush()
+   libtcod.console_wait_for_keypress(False)
+
+   
+
+
+
+
+
 def playGame(player, gameObjects, con, panel):
    # main game loop starts here
    objects = gameObjects
@@ -78,7 +101,7 @@ objects = []
 
 # game object initialisation
 # make the player
-playerActor = Actor(money=500)
+playerActor = Actor(money=90000)
 playerGraphic = Graphic('@', PLAYER_NAME, PLAYER_COLOUR, None)
 player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor)
 
@@ -114,11 +137,16 @@ for column in range(0, SCREEN_WIDTH):
 libtcod.console_set_custom_font('terminal16x16_gs_ro.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWORD SHOP', False)
 libtcod.sys_set_fps(LIMIT_FPS)
+
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 con = libtcod.console_new(SCREEN_WIDTH, GAME_HEIGHT)
 infobar = libtcod.console_new(SCREEN_WIDTH, INFO_BAR_HEIGHT)
+fullscreencon = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
 libtcod.console_set_default_background(con, GAME_BACKGROUND_COLOUR)
+
 libtcod.console_clear(con)
 
+splashScreen(fullscreencon)
+libtcod.console_clear(con)
 
 playGame(player, objects, con, panel)

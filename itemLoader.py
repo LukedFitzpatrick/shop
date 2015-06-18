@@ -4,11 +4,12 @@ from object import *
 import libtcodpy as libtcod
 
 class Item:
-   def __init__(self, char, name, colour, cost):
+   def __init__(self, char, name, colour, cost, category=""):
       self.cost = cost
       self.char = char
       self.name = name
       self.colour = colour
+      self.category = category
 
    def getCost(self):
       return self.cost
@@ -42,8 +43,9 @@ def getFullItemList():
       green = int(ConfigSectionMap(section)["green"])
       blue = int(ConfigSectionMap(section)["blue"])
       cost = int(ConfigSectionMap(section)["cost"])
+      category = ConfigSectionMap(section)["category"]
 
-      newItem = Item(char, name, libtcod.Color(red, green, blue), cost)
+      newItem = Item(char, name, libtcod.Color(red, green, blue), cost, category)
       items.append(newItem)
    global itemList
    itemList = items

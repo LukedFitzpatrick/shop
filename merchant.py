@@ -7,7 +7,7 @@ import libtcodpy as libtcod
 import random
 
 def generateMerchant():
-   merchantGraphic = Graphic('M', "Merchant", getRandomColour())
+   merchantGraphic = Graphic('@', "Merchant", getRandomColour())
    merchantActor = Actor()
    merchantAI = AI()
    startX = random.choice([0, SCREEN_WIDTH-1])

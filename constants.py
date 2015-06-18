@@ -38,7 +38,12 @@ PANEL_TEXT_COLOURS = [libtcod.Color(192,41,66), libtcod.Color(254,67,101), libtc
                      libtcod.Color(249, 205, 173), libtcod.Color(200,200,169), libtcod.Color(131,175,155)]
 
 INFO_BAR_BACKGROUND_COLOUR = libtcod.Color(200,200,169)
-INFO_BAR_MONEY_COLOUR = libtcod.Color(217,91,67)
+INFO_BAR_MONEY_COLOUR = libtcod.Color(0,0,0)
+
+SPLASH_BACKGROUND_COLOUR = libtcod.Color(84,36,55)
+SPLASH_FOREGROUND_COLOUR1 = libtcod.Color(217,91,67)
+SPLASH_FOREGROUND_COLOUR2 = libtcod.Color(249, 205, 173)
+SPLASH_FOREGROUND_COLOUR3 = libtcod.Color(131,175,155)
 
 SEE_MESSAGE_COLOUR_CODE = 5
 PICKUP_MESSAGE_COLOUR_CODE = 3
