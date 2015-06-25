@@ -9,6 +9,7 @@ from spawner import *
 import libtcodpy as libtcod
 import random
 from screens import *
+from timing import *
 
 
 def playGame(player, gameObjects, con, panel):
@@ -29,8 +30,9 @@ def playGame(player, gameObjects, con, panel):
       commandStream.remove(command)
    #################################################################
 
+   gameRunning = True
    #################################################################
-   while not libtcod.console_is_window_closed():
+   while not libtcod.console_is_window_closed() and gameRunning:
       # draw all the objects first:
       renderAll(objects, player, con, panel, infobar)
       # apply drawing updates
@@ -81,6 +83,14 @@ def playGame(player, gameObjects, con, panel):
 
       # update the moving messages
       updateMoveMessage(player, objects)
+
+      # advance the clock
+      updateTime()
+      
+      # check if the game should be over because of the time
+      if(timeRunOut()):
+         gameRunning = False
+         
    #################################################################
       
 
@@ -88,7 +98,7 @@ objects = []
 
 # game object initialisation
 # make the player
-playerActor = Actor(money=90000)
+playerActor = Actor(money=10)
 playerGraphic = Graphic('@', PLAYER_NAME, PLAYER_COLOUR, None)
 player = Object(x=5, y=5, blocks=True, graphic=playerGraphic, actor=playerActor)
 
@@ -129,14 +139,16 @@ fullscreencon = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
 libtcod.console_set_default_background(con, GAME_BACKGROUND_COLOUR)
 
 
-loadingScreen(fullscreencon)
+loadingScreen(fullscreencon, "loading swords...")
 items = getFullItemList()
-"""
+loadingScreen(fullscreencon, "loading names...")
+names = loadNames()
+
 libtcod.console_clear(fullscreencon)
 splashScreen(fullscreencon)
-libtcod.console_clear(fullscreencon)
-storyScreen(fullscreencon)
-"""
+#libtcod.console_clear(fullscreencon)
+#storyScreen(fullscreencon)
+
 libtcod.console_clear(con)
 
 playGame(player, objects, con, panel)

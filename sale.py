@@ -8,7 +8,7 @@ class Sale:
       self.saleItem = saleItem
 
    def getSaleCost(self):
-      return self.saleItem.cost
+      return int(self.saleItem.cost * PRICE_MARKUP)
 
    def createSaleObject(self, xa, ya):
       newItem = self.saleItem

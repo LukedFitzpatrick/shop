@@ -1,4 +1,5 @@
 import libtcodpy as libtcod
+from timing import *
 from constants import *
 from message import *
 
@@ -61,7 +62,7 @@ def renderAll(objects, player, con, panel, infobar):
    libtcod.console_set_default_background(panel, PANEL_BACKGROUND_COLOUR)
    libtcod.console_clear(panel)
  
-   #print the current game message
+   # print the current game message
    libtcod.console_set_default_foreground(panel, getMessageColour())
    libtcod.console_print_rect(panel, 1, 1, SCREEN_WIDTH-1, PANEL_HEIGHT, getMessage())
    
@@ -72,18 +73,17 @@ def renderAll(objects, player, con, panel, infobar):
    libtcod.console_set_default_background(infobar, INFO_BAR_BACKGROUND_COLOUR)
    libtcod.console_clear(infobar)
    
-   # print their current money
+   # print their current money and the time
    libtcod.console_set_default_foreground(infobar, getMoneyColour(player.actor.money))
    libtcod.console_print_rect(infobar, SCREEN_WIDTH/2 - 3, 0, SCREEN_WIDTH, INFO_BAR_HEIGHT, "$"+str(player.actor.money))
-
+   libtcod.console_set_default_foreground(infobar, getTimeColour())
+   libtcod.console_print_rect(infobar, SCREEN_WIDTH/2 + 3, 0, SCREEN_WIDTH, INFO_BAR_HEIGHT, getTimeString())
+   
    libtcod.console_blit(infobar, 0, 0, SCREEN_WIDTH, INFO_BAR_HEIGHT, 0, 0, INFO_BAR_Y)
 
 
 
    
-
-
-
 def getWallGraphic():
    wallGraphic = Graphic('0', "Wall", WALL_COLOUR)
    return wallGraphic

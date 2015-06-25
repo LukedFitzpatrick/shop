@@ -1,12 +1,12 @@
 import libtcodpy as libtcod
 from constants import *
-def loadingScreen(console):
+def loadingScreen(console, message):
    libtcod.console_set_default_background(console, libtcod.Color(0, 0, 0))
    libtcod.console_clear(console)
  
    #print the splash messages
    libtcod.console_set_default_foreground(console, libtcod.Color(200, 200, 200))
-   libtcod.console_print_rect(console, 4, 8, SCREEN_WIDTH, SCREEN_HEIGHT, "loading swords...")
+   libtcod.console_print_rect(console, 4, 8, SCREEN_WIDTH, SCREEN_HEIGHT, message)
 
    # blit the panel to the screen
    libtcod.console_blit(console, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-(2*4), 0, 0, 4)   

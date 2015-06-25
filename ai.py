@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 import random
 from itemLoader import *
 from constants import *
+from sale import *
 
 class AI:
    def __init__(self, merchant, shopper):
@@ -38,7 +39,7 @@ class AI:
                return self.parent.graphic.name + " says \"Thanks!\""
             elif playerHeldObject and playerHeldObject.item.category == self.desiredCategory:
                return (self.parent.graphic.name + " says " + "\"That's what I want! You'll take $" + 
-               str(playerHeldObject.item.cost) + "?")
+               str(getCurrentSaleCost()) + "?")
             else:
                return (self.parent.graphic.name + " says " + "\"I want a " + 
                self.desiredCategory + "!")

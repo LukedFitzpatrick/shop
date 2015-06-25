@@ -13,8 +13,8 @@ K_PICKUP = 'g'
 K_ACCEPT_TRANSACTION = 'y'
 K_NOTHING = libtcod.KEY_SPACE
 
-FASTEST_SPEED = 2
-SLOWEST_SPEED = 10
+FASTEST_SPEED = 5
+SLOWEST_SPEED = 20
 
 MERCHANT_LIFE = 500
 MERCHANT_TARGET_CHANGE = 50
@@ -52,6 +52,8 @@ SEE_MESSAGE_COLOUR_CODE = 5
 PICKUP_MESSAGE_COLOUR_CODE = 3
 DROP_MESSAGE_COLOUR_CODE = 4
 
+PRICE_MARKUP = 1.1
+
 
 STORY_TEXT1 = ("You are the owner of a boutique sword bazaar. \n\n Traders and customers from all over the world come every day to buy and sell swords.")
 STORY_BACKGROUND_COLOUR1 = libtcod.Color(0, 0, 0)
@@ -61,7 +63,9 @@ STORY_FOREGROUND_COLOUR1 = libtcod.Color(249, 205, 173)
 PLAYER_NAME = "You"
 
 # the maximum FPS
-LIMIT_FPS = 20
+LIMIT_FPS = 30
+
+TIME_UPDATE_INCREMENT = 0.3
 
 def getRandomColour():
    return libtcod.Color(random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255))

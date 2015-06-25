@@ -1,0 +1,13 @@
+import libtcodpy as libtcod
+
+def getTimeString():
+   return "6 A.M"
+
+def updateTime():
+   pass
+
+def timeRunOut():
+   return False
+
+def getTimeColour():
+   return libtcod.Color(255, 255, 255)
